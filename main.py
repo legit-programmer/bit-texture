@@ -1,63 +1,55 @@
 import pygame
 import random
+from ui import Components, ClickListener
 
 pygame.init()
 
-WIDTH, HEIGHT = (1280, 720)
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+WIDTH, HEIGHT = (800, 800)
+WIN_WIDTH, WIN_HEIGHT = (1280, 800)
+WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 FPS = 60
 CLOCK = pygame.time.Clock()
 
 running = True
 WIN.fill((255, 255, 255))
 
-
-class Particle:
-    def __init__(self, radius: int, color: tuple) -> None:
-        self.r = radius
-        self.x = self.r
-        self.y = random.randrange(self.r, HEIGHT-self.r)
+class Brush:
+    def __init__(self, color: tuple) -> None:
         self.color = color
-        self.ux = 1
-        self.uy = 0
-        self.vel = random.randrange(0, 50)
 
-    def draw(self):
-        pygame.draw.circle(WIN, self.color, (self.x, self.y), self.r)
-
-    def move(self):
-        self.x += self.vel*self.ux
-        self.y += self.vel*self.uy
-
-    def determine(self):
-        bowl = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        choice = random.choice(bowl)
-        if choice == 9:
-            self.uy = ((random.randrange(0, 9)/10)) * random.choice([-1, 1])
+    def draw(self, grid: tuple, gridPos: tuple):
+        if gridPos[0] < grid[0] and gridPos[1] < grid[1]:
+            pygame.draw.rect(WIN, self.color, pygame.Rect(
+                gridPos[0]*(WIDTH/grid[0]), gridPos[1]*(HEIGHT/grid[1]), WIDTH/grid[0]+2, HEIGHT/grid[1]+2))
 
 
-particles = list()
+def getGridPos(pixelsPos: tuple, grid: tuple):
+    return (int(pixelsPos[0]/(WIDTH/grid[0])), int(pixelsPos[1]/(HEIGHT/grid[1])))
 
 
-def generateParticles(number: int):
-    for _ in range(number):
-        R = random.randrange(0, 255)
-        G = random.randrange(0, 255)
-        B = random.randrange(0, 255)
 
-        particles.append(Particle(1, (R, G, B)))
+def drawGrid(col: int, row: int):
+    for i in range(col):
+        pygame.draw.line(WIN, (0, 0, 0), (i*(WIDTH/col), 0),
+                         (i*(WIDTH/col), HEIGHT))
 
+    for j in range(row):
+        pygame.draw.line(WIN, (0, 0, 0), (0, j*(HEIGHT/row)),
+                         (WIDTH, j*(HEIGHT/row)))
 
-def drawParticles():
-    for particle in particles:
-        particle.draw()
-        particle.determine()
-        particle.move()
+    return (col, row)
 
 
-generateParticles(1000)
+component = Components(WIN)
+clickListener = ClickListener()
+brush = Brush((255, 0, 0))
+
+button1 = component.Button('dff', (800, 10))
+
+
 while running:
-    # WIN.fill((255, 255, 255))
+    
+    grid = drawGrid(8, 8)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -66,6 +58,13 @@ while running:
     if keys[pygame.K_q]:
         running = False
 
-    drawParticles()
+    left, middle, right = pygame.mouse.get_pressed()
+    if left:
+        grid_position = getGridPos(pygame.mouse.get_pos(), grid)
+        brush.draw(grid, grid_position)
+
+    component.drawAllComponents()
+
+    clickListener.listenEvents()
     pygame.display.flip()
     CLOCK.tick(FPS)
