@@ -2,7 +2,9 @@ import pygame
 from ui import Components, ClickListener
 from utils.grid import Grid
 from utils.brush import Brush
-
+import os
+import numpy as np
+from PIL import Image, ImageDraw, ImageDraw2
 pygame.init()
 
 WIDTH, HEIGHT = (800, 800)
@@ -34,11 +36,32 @@ bit32 = component.Button('32x32')
 bit64 = component.Button('64x64')
 bit128 = component.Button('128x128')
 
+export = component.Button('export')
+exporting = False
+
+
+def exportBuffer():
+    global exporting
+    if not exporting:
+
+        image = Image.new('RGB', grid.get_grid())
+        draw = ImageDraw.Draw(image)
+        for i in range(0, grid.get_grid()[0]):
+            for j in range(0, grid.get_grid()[1]):
+
+                R, G, B, _ = WIN.get_at(
+                    (int((i*(WIDTH/grid.get_grid()[0]))+1), int((j*(HEIGHT/grid.get_grid()[1]))+1)))
+
+                draw.point((i, j), (R, G, B))
+
+        image.save('export.png')
+        exporting = False
+
 
 clickListener.addListener(eraser, lambda: brush.setColor((255, 255, 255)))
 clickListener.addListener(clear, lambda: WIN.fill((255, 255, 255)))
 
-
+clickListener.addListener(export, exportBuffer)
 clickListener.addListener(green, lambda: brush.setColor((0, 255, 0)))
 clickListener.addListener(red, lambda: brush.setColor((255, 0, 0)))
 clickListener.addListener(yellow, lambda: brush.setColor((255, 255, 0)))
