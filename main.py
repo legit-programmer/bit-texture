@@ -13,6 +13,7 @@ CLOCK = pygame.time.Clock()
 running = True
 WIN.fill((255, 255, 255))
 
+
 class Brush:
     def __init__(self, color: tuple) -> None:
         self.color = color
@@ -22,10 +23,12 @@ class Brush:
             pygame.draw.rect(WIN, self.color, pygame.Rect(
                 gridPos[0]*(WIDTH/grid[0]), gridPos[1]*(HEIGHT/grid[1]), WIDTH/grid[0]+2, HEIGHT/grid[1]+2))
 
+    def setColor(self, color: tuple):
+        self.color = color
+
 
 def getGridPos(pixelsPos: tuple, grid: tuple):
     return (int(pixelsPos[0]/(WIDTH/grid[0])), int(pixelsPos[1]/(HEIGHT/grid[1])))
-
 
 
 def drawGrid(col: int, row: int):
@@ -44,11 +47,20 @@ component = Components(WIN)
 clickListener = ClickListener()
 brush = Brush((255, 0, 0))
 
-button1 = component.Button('dff', (800, 10))
+eraser = component.Button('eraser')
+green = component.Button('green')
+red = component.Button('red')
+blue = component.Button('blue')
+yellow = component.Button('yellow')
 
+clickListener.addListener(eraser, lambda: brush.setColor((255, 255, 255)))
+clickListener.addListener(green, lambda: brush.setColor((0, 255, 0)))
+clickListener.addListener(red, lambda: brush.setColor((255, 0, 0)))
+clickListener.addListener(yellow, lambda: brush.setColor((255, 255, 0)))
+clickListener.addListener(blue, lambda: brush.setColor((0, 0, 255)))
 
 while running:
-    
+
     grid = drawGrid(8, 8)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

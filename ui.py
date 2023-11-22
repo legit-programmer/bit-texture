@@ -1,20 +1,28 @@
 import pygame
 
+pygame.init()
+font = pygame.font.Font(pygame.font.get_default_font(), 18)
+
 
 class Components:
-    def __init__(self, window) -> None:
+    def __init__(self, window: pygame.Surface) -> None:
         self.window = window
         self.buttons = list()
 
-    def Button(self, name: str, pos: tuple, color:tuple=None):
-        top, left = pos
-        rect = pygame.Rect(top, left, 75, 50)
-        self.buttons.append(rect)
-        return rect
+    def Button(self, name: str):
+        rect = pygame.Rect(900, 80, 75, 50)
+        if len(self.buttons) > 0:
+            top, left = self.buttons[-1]['rect'].top, self.buttons[-1]['rect'].left
+            rect = pygame.Rect(left, top+60, 75, 50)
+        button = {'rect': rect, 'name': name}
+        self.buttons.append(button)
+        return button['rect']
 
     def drawAllComponents(self):
         for button in self.buttons:
-            pygame.draw.rect(self.window, (230, 230, 230), button)
+            pygame.draw.rect(self.window, (230, 230, 230), button['rect'])
+            text = font.render(button['name'], False, (0, 0, 0))
+            self.window.blit(text, (button['rect'].left, button['rect'].top))
 
 
 class ClickListener:
