@@ -1,6 +1,7 @@
 import pygame
-import random
 from ui import Components, ClickListener
+from utils.grid import Grid
+from utils.brush import Brush
 
 pygame.init()
 
@@ -14,54 +15,43 @@ running = True
 WIN.fill((255, 255, 255))
 
 
-class Brush:
-    def __init__(self, color: tuple) -> None:
-        self.color = color
-
-    def draw(self, grid: tuple, gridPos: tuple):
-        if gridPos[0] < grid[0] and gridPos[1] < grid[1]:
-            pygame.draw.rect(WIN, self.color, pygame.Rect(
-                gridPos[0]*(WIDTH/grid[0]), gridPos[1]*(HEIGHT/grid[1]), WIDTH/grid[0]+2, HEIGHT/grid[1]+2))
-
-    def setColor(self, color: tuple):
-        self.color = color
-
-
-def getGridPos(pixelsPos: tuple, grid: tuple):
-    return (int(pixelsPos[0]/(WIDTH/grid[0])), int(pixelsPos[1]/(HEIGHT/grid[1])))
-
-
-def drawGrid(col: int, row: int):
-    for i in range(col):
-        pygame.draw.line(WIN, (0, 0, 0), (i*(WIDTH/col), 0),
-                         (i*(WIDTH/col), HEIGHT))
-
-    for j in range(row):
-        pygame.draw.line(WIN, (0, 0, 0), (0, j*(HEIGHT/row)),
-                         (WIDTH, j*(HEIGHT/row)))
-
-    return (col, row)
-
-
+grid = Grid(WIN, (WIDTH, HEIGHT))
 component = Components(WIN)
 clickListener = ClickListener()
-brush = Brush((255, 0, 0))
+brush = Brush(WIN, (WIDTH, HEIGHT), (255, 0, 0))
 
 eraser = component.Button('eraser')
+clear = component.Button('clear')
+
 green = component.Button('green')
 red = component.Button('red')
 blue = component.Button('blue')
 yellow = component.Button('yellow')
 
+bit8 = component.Button('8x8')
+bit16 = component.Button('16x16')
+bit32 = component.Button('32x32')
+bit64 = component.Button('64x64')
+bit128 = component.Button('128x128')
+
+
 clickListener.addListener(eraser, lambda: brush.setColor((255, 255, 255)))
+clickListener.addListener(clear, lambda: WIN.fill((255, 255, 255)))
+
+
 clickListener.addListener(green, lambda: brush.setColor((0, 255, 0)))
 clickListener.addListener(red, lambda: brush.setColor((255, 0, 0)))
 clickListener.addListener(yellow, lambda: brush.setColor((255, 255, 0)))
 clickListener.addListener(blue, lambda: brush.setColor((0, 0, 255)))
 
+clickListener.addListener(bit16, lambda: grid.set_grid(16, 16))
+clickListener.addListener(bit32, lambda: grid.set_grid(32, 32))
+clickListener.addListener(bit64, lambda: grid.set_grid(64, 64))
+clickListener.addListener(bit128, lambda: grid.set_grid(128, 128))
+clickListener.addListener(bit8, lambda: grid.set_grid(8, 8))
 while running:
 
-    grid = drawGrid(8, 8)
+    grid.drawGrid()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -72,7 +62,7 @@ while running:
 
     left, middle, right = pygame.mouse.get_pressed()
     if left:
-        grid_position = getGridPos(pygame.mouse.get_pos(), grid)
+        grid_position = grid.getGridPos(pygame.mouse.get_pos())
         brush.draw(grid, grid_position)
 
     component.drawAllComponents()
