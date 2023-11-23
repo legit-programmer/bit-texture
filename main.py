@@ -23,6 +23,7 @@ clickListener = ClickListener()
 brush = Brush(WIN, (WIDTH, HEIGHT), (255, 0, 0))
 
 eraser = component.Button('eraser')
+transparent = component.Button('Transperant')
 clear = component.Button('clear')
 
 green = component.Button('green')
@@ -44,15 +45,17 @@ def exportBuffer():
     global exporting
     if not exporting:
 
-        image = Image.new('RGB', grid.get_grid())
+        image = Image.new('RGBA', grid.get_grid())
         draw = ImageDraw.Draw(image)
         for i in range(0, grid.get_grid()[0]):
             for j in range(0, grid.get_grid()[1]):
 
-                R, G, B, _ = WIN.get_at(
+                R, G, B, A = WIN.get_at(
                     (int((i*(WIDTH/grid.get_grid()[0]))+1), int((j*(HEIGHT/grid.get_grid()[1]))+1)))
-
-                draw.point((i, j), (R, G, B))
+                
+                
+                if (R, G, B)!= (0, 1, 0):
+                    draw.point((i, j), (R, G, B, A))
 
         image.save('export.png')
         exporting = False
@@ -72,6 +75,7 @@ clickListener.addListener(bit32, lambda: grid.set_grid(32, 32))
 clickListener.addListener(bit64, lambda: grid.set_grid(64, 64))
 clickListener.addListener(bit128, lambda: grid.set_grid(128, 128))
 clickListener.addListener(bit8, lambda: grid.set_grid(8, 8))
+clickListener.addListener(transparent, lambda:brush.setTransparent(True))
 while running:
 
     grid.drawGrid()

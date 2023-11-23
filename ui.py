@@ -10,7 +10,7 @@ class Components:
         self.buttons = list()
 
     def Button(self, name: str):
-        rect = pygame.Rect(900, 80, 75, 50)
+        rect = pygame.Rect(900, 10, 75, 50)
         if len(self.buttons) > 0:
             top, left = self.buttons[-1]['rect'].top, self.buttons[-1]['rect'].left
             rect = pygame.Rect(left, top+60, 75, 50)
