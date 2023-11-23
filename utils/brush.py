@@ -8,10 +8,11 @@ class Brush:
         self.WIN = window
         self.WIDTH, self.HEIGHT = gridDimension
         self.transparent = False
+        self.disabled = False
         
 
     def draw(self, grid: Grid, gridPos: tuple):
-        if gridPos[0] < grid.get_grid()[0] and gridPos[1] < grid.get_grid()[1]:
+        if gridPos[0] < grid.get_grid()[0] and gridPos[1] < grid.get_grid()[1] and not self.disabled:
             left = gridPos[0]*(self.WIDTH/grid.get_grid()[0])
             top = gridPos[1]*(self.HEIGHT/grid.get_grid()[1])
             width = self.WIDTH/grid.get_grid()[0]+1

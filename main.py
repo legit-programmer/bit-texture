@@ -12,7 +12,7 @@ WIN_WIDTH, WIN_HEIGHT = (1280, 800)
 WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 FPS = 60
 CLOCK = pygame.time.Clock()
-
+font = pygame.font.Font(pygame.font.get_default_font(), 18)
 running = True
 WIN.fill((255, 255, 255))
 
@@ -41,6 +41,35 @@ export = component.Button('export')
 exporting = False
 
 
+
+
+def checkColor():
+    keys = pygame.key.get_pressed()
+    R, G, B = brush.color
+    print(B)
+    text = f'RED: {R}, GREEN: {G}, BLUE: {B}'
+    text = font.render(text, False, (255, 255, 255), (0, 0, 255))
+    WIN.blit(text, (980, 10))
+    
+    if keys[pygame.K_r] and keys[pygame.K_UP] and R < 255:
+        brush.setColor((R+1, G, B))
+
+    if keys[pygame.K_r] and keys[pygame.K_DOWN] and R > 0:
+        brush.setColor((R-1, G, B))
+
+    if keys[pygame.K_g] and keys[pygame.K_UP] and G < 255:
+        brush.setColor((R, G+1, B))
+
+    if keys[pygame.K_g] and keys[pygame.K_DOWN] and G > 0:
+        brush.setColor((R, G-1, B))
+
+    if keys[pygame.K_b] and keys[pygame.K_UP] and B < 255:
+        brush.setColor((R, G, B+1))
+
+    if keys[pygame.K_b] and keys[pygame.K_DOWN] and B > 0:
+        brush.setColor((R, G, B-1))
+
+
 def exportBuffer():
     global exporting
     if not exporting:
@@ -52,9 +81,8 @@ def exportBuffer():
 
                 R, G, B, A = WIN.get_at(
                     (int((i*(WIDTH/grid.get_grid()[0]))+1), int((j*(HEIGHT/grid.get_grid()[1]))+1)))
-                
-                
-                if (R, G, B)!= (0, 1, 0):
+
+                if (R, G, B) != (0, 1, 0):
                     draw.point((i, j), (R, G, B, A))
 
         image.save('export.png')
@@ -75,7 +103,7 @@ clickListener.addListener(bit32, lambda: grid.set_grid(32, 32))
 clickListener.addListener(bit64, lambda: grid.set_grid(64, 64))
 clickListener.addListener(bit128, lambda: grid.set_grid(128, 128))
 clickListener.addListener(bit8, lambda: grid.set_grid(8, 8))
-clickListener.addListener(transparent, lambda:brush.setTransparent(True))
+clickListener.addListener(transparent, lambda: brush.setTransparent(True))
 while running:
 
     grid.drawGrid()
@@ -94,6 +122,7 @@ while running:
 
     component.drawAllComponents()
 
+    checkColor()
     clickListener.listenEvents()
     pygame.display.flip()
     CLOCK.tick(FPS)
