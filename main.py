@@ -46,7 +46,6 @@ exporting = False
 def checkColor():
     keys = pygame.key.get_pressed()
     R, G, B = brush.color
-    print(B)
     text = f'RED: {R}, GREEN: {G}, BLUE: {B}'
     text = font.render(text, False, (255, 255, 255), (0, 0, 255))
     WIN.blit(text, (980, 10))
