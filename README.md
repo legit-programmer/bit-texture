@@ -1,4 +1,5 @@
-# bit-texture ![image](https://github.com/legit-programmer/bit-texture/assets/66078215/0f1abda1-7a59-412b-876f-7a3b698d33c7)
+<h1 align="center">bit-texture <img src=https://github.com/legit-programmer/bit-texture/assets/66078215/0f1abda1-7a59-412b-876f-7a3b698d33c7></img></h1>
+
 A simple tool to create pixel textures with multiple grid options:
 
 * 8x8
