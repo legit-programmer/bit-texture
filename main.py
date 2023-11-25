@@ -41,15 +41,13 @@ export = component.Button('export')
 exporting = False
 
 
-
-
 def checkColor():
     keys = pygame.key.get_pressed()
     R, G, B = brush.color
     text = f'RED: {R}, GREEN: {G}, BLUE: {B}'
     text = font.render(text, False, (255, 255, 255), (0, 0, 255))
     WIN.blit(text, (980, 10))
-    
+
     if keys[pygame.K_r] and keys[pygame.K_UP] and R < 255:
         brush.setColor((R+1, G, B))
 
@@ -84,7 +82,10 @@ def exportBuffer():
                 if (R, G, B) != (0, 1, 0):
                     draw.point((i, j), (R, G, B, A))
 
-        image.save('export.png')
+        exports = [export for export in os.listdir(
+            'exports') if export.startswith('export')]
+        image.save(f'exports/export{len(exports)+1}.png')
+
         exporting = False
 
 
